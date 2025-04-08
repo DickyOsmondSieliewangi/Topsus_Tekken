@@ -3,7 +3,7 @@ from tqdm import tqdm
 import os
 
 class BPNN:
-    def __init__(self, layer_sizes, id, optimizer='adam', activation='relu', output_activation=None):
+    def __init__(self, layer_sizes, id, optimizer='adam', activation='tanh', output_activation=None):
         self.layer_sizes = layer_sizes
         print(f'Initializing network with layer sizes: {layer_sizes}')
         self.number_of_layers = len(layer_sizes)
