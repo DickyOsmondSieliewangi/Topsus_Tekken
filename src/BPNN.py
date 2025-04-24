@@ -1,6 +1,7 @@
 import numpy as np
 from tqdm import tqdm
 import os
+import matplotlib.pyplot as plt
 
 class BPNN:
     def __init__(self, layer_sizes, id, optimizer='adam', activation='tanh', output_activation=None):
@@ -176,7 +177,7 @@ class BPNN:
                 self.weights[l] -= learning_rate * self.gradients[f'dW{l+1}']
                 self.biases[l] -= learning_rate * self.gradients[f'db{l+1}']
 
-    def train(self, X, y, X_val, y_val, epochs, batch_size=1, learning_rate=0.001, 
+    def train(self, X, y, X_val, y_val, epochs, batch_size=1, learning_rate = 1e-5, 
               patience=3, error_limit=1e-5, generate_new_params=True, shuffle = True):
         """
         Train the network with mini-batch gradient descent
@@ -272,8 +273,14 @@ class BPNN:
                     self.weights = best_weights
                     self.biases = best_biases
                     self.save_parameters()
+                
+                #plot loss
+                self.plot_loss(error_log, val_error_log)
                     
                 return {'loss': error_log, 'val_loss': val_error_log}
+
+        #plot loss
+        self.plot_loss(error_log, val_error_log)
                 
         print(f'Completed {epochs} epochs. Training Loss: {training_error:.6f}, Validation Loss: {val_error:.6f}')
         return {'loss': error_log, 'val_loss': val_error_log}
@@ -289,3 +296,14 @@ class BPNN:
         if len(X.shape) == 1:
             X = X.reshape(1, -1)
         return self.forward_propagation(X)
+    
+    def plot_loss(self, error_log, val_error_log):
+        """Plot training and validation loss"""
+        plt.figure(figsize=(10, 5))
+        plt.plot(error_log, label='Training Loss')
+        plt.plot(val_error_log, label='Validation Loss')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.title(f'Training and Validation Loss for Network ID: {self.id}')
+        plt.legend()
+        plt.show()
